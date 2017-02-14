@@ -1,5 +1,5 @@
-import java.awt.*;
-import java.awt.event.*;
+package snake;
+
 import javax.swing.*;
 
 class Snake extends JFrame {
