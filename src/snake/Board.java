@@ -53,9 +53,9 @@ public class Board extends JPanel implements ActionListener {
 		bodyLength = 3;
 		int x = 200;
 		int y = 200;
-		for(int i = 0; i<bodyLength; i++) {
-			bodySnakeX[i] = x;
-			bodySnakeY[i] = y;
+		for(int length = 0; length<bodyLength; length++) {
+			bodySnakeX[length] = x;
+			bodySnakeY[length] = y;
 			x -= BOX_SIZE;
 		}
 		newBait();
@@ -74,9 +74,9 @@ public class Board extends JPanel implements ActionListener {
 			int resy = BOX_SIZE - y%BOX_SIZE;
 			baitX = x + resx;
 			baitY = y + resy;
-			for(int i = 0; i<bodyLength;i++) {
+			for(int length = 0; length<bodyLength;length++) {
 				//gaat door als het punt ook een punt van de slang is
-				if(bodySnakeX[i] == baitX && bodySnakeY[i] == baitY) {
+				if(bodySnakeX[length] == baitX && bodySnakeY[length] == baitY) {
 					noNewBait = true;
 				}
 			}
@@ -117,8 +117,8 @@ public class Board extends JPanel implements ActionListener {
 		//grid wordt getekend
 		int x = 0;
 		int y = 0;
-		for(int i = 0; i<10; i++) {
-			for(int j = 0; j<10; j++) {
+		for(int boardX = 0; boardX<TOTAL_BOXES/2; boardX++) {
+			for(int boardY = 0; boardY<TOTAL_BOXES/2; boardY++) {
 				g.drawRect(x,y,BOX_SIZE,BOX_SIZE);
 				x+= BOX_SIZE;
 			}
@@ -132,8 +132,8 @@ public class Board extends JPanel implements ActionListener {
 		g.setColor(Color.GREEN);
 		g.fillOval(bodySnakeX[0], bodySnakeY[0],BOX_SIZE,BOX_SIZE);
 		g.setColor(Color.BLACK);
-		for(int i=1; i<bodyLength;i++) {
-			g.fillOval(bodySnakeX[i],bodySnakeY[i],BOX_SIZE,BOX_SIZE);
+		for(int length=1; length<bodyLength;length++) {
+			g.fillOval(bodySnakeX[length],bodySnakeY[length],BOX_SIZE,BOX_SIZE);
 		}
 	}
 
@@ -145,9 +145,9 @@ public class Board extends JPanel implements ActionListener {
 
 	public void moveSnake() {
 		//elk punt neemt de positie van zijn voorganger over
-		for(int i = bodyLength; i>0; i--) {
-			bodySnakeX[i] = bodySnakeX[i-1];
-			bodySnakeY[i] = bodySnakeY[i-1];
+		for(int length = bodyLength; length>0; length--) {
+			bodySnakeX[length] = bodySnakeX[length-1];
+			bodySnakeY[length] = bodySnakeY[length-1];
 		}
 		//positie voorste is een nieuw punt en als hij aan het eind van de frame is dan gaat hij verder aan de andere kant
 		switch (direction) {
