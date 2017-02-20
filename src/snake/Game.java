@@ -2,9 +2,9 @@ package snake;
 
 import javax.swing.*;
 
-class Snake extends JFrame {
+class Game extends JFrame {
 
-	public Snake() {
+	public Game() {
 		add(new Board());
 		setResizable(false);
 		pack();
@@ -12,7 +12,7 @@ class Snake extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	public static void main(String[] arg) {
-		JFrame ex = new Snake();
+		JFrame ex = new Game();
 		ex.setVisible(true);
 	}
 }

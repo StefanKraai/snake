@@ -12,7 +12,7 @@ public class Board extends JPanel implements ActionListener {
 	private final int BOARD_SIZE = 500;
 	private final int BOX_SIZE = 50;
 	private final int REMAINING_SIZE = BOARD_SIZE - BOX_SIZE;
-	private final int TOTAL_BOXES = BOARD_SIZE / BOX_SIZE;
+	private final int TOTAL_BOXES = (BOARD_SIZE / BOX_SIZE)*(BOARD_SIZE / BOX_SIZE);
 
 	private boolean isGameOver;
 	private Direction direction = Direction.RIGHT;
@@ -41,7 +41,7 @@ public class Board extends JPanel implements ActionListener {
 		graphics.fillRect(0,0,BOARD_SIZE,BOARD_SIZE);
 		graphics.setColor(Color.BLACK);
 		moveSnake();
-		checkCollisionAdd();
+		checkCollisionBait();
 		checkCollisionTail();
 		draw(graphics);
 	}
@@ -58,15 +58,15 @@ public class Board extends JPanel implements ActionListener {
 			bodySnakeY[i] = y;
 			x -= BOX_SIZE;
 		}
-		newAdd();
+		newBait();
 		timer.start();
 	}
 
-	public void newAdd() {
+	public void newBait() {
 		//nieuw punt kan niet op slang
-		boolean test = true;
-		while(test) {
-			test = false;
+		boolean noNewBait = true;
+		while(noNewBait) {
+			noNewBait = false;
 			//berekening punt
 			int x = getRandom(REMAINING_SIZE);
 			int y = getRandom(REMAINING_SIZE);
@@ -77,17 +77,17 @@ public class Board extends JPanel implements ActionListener {
 			for(int i = 0; i<bodyLength;i++) {
 				//gaat door als het punt ook een punt van de slang is
 				if(bodySnakeX[i] == baitX && bodySnakeY[i] == baitY) {
-					test = true;
+					noNewBait = true;
 				}
 			}
 		}
 	}
 
-	public void checkCollisionAdd() {
+	public void checkCollisionBait() {
 		//als hij nieuw punt bereikt wordt die toegevoegd en nieuwe aangemaakt
 		if(bodySnakeX[0]== baitX && bodySnakeY[0]== baitY) {
 			bodyLength++;
-			newAdd();
+			newBait();
 		}
 	}
 
@@ -105,7 +105,7 @@ public class Board extends JPanel implements ActionListener {
 		if(!isGameOver) {
 			drawCheckBoard(g);
 			drawSnake(g);
-			drawAdd(g);
+			drawBait(g);
 		}
 		//als hij game over is
 		else {
@@ -137,7 +137,7 @@ public class Board extends JPanel implements ActionListener {
 		}
 	}
 
-	public void drawAdd(Graphics g) {
+	public void drawBait(Graphics g) {
 		//nieuw punt getekend
 		g.setColor(Color.RED);
 		g.fillOval(baitX, baitY,BOX_SIZE,BOX_SIZE);
@@ -205,27 +205,27 @@ public class Board extends JPanel implements ActionListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			//rechts
-			if(e.getKeyCode()==39) {
+			if(e.getKeyCode()== KeyEvent.VK_RIGHT) {
 				direction = Direction.RIGHT;
 			}
 			//links
-			else if(e.getKeyCode()==37) {
+			else if(e.getKeyCode()== KeyEvent.VK_LEFT) {
 				direction = Direction.LEFT;
 			}
 			//onder
-			else if(e.getKeyCode()==40) {
+			else if(e.getKeyCode()== KeyEvent.VK_DOWN) {
 				direction = Direction.DOWN;
 			}
 			//boven
-			else if(e.getKeyCode()==38) {
+			else if(e.getKeyCode()== KeyEvent.VK_UP) {
 				direction = Direction.UP;
 			}
 			//y
-			else if(e.getKeyCode()==89 && isGameOver) {
+			else if(e.getKeyCode()== KeyEvent.VK_Y && isGameOver) {
 				initGame();
 			}
 			//n
-			else if(e.getKeyCode()==78 && isGameOver) {
+			else if(e.getKeyCode()== KeyEvent.VK_N && isGameOver) {
 				System.exit(0);
 			}
 		}
