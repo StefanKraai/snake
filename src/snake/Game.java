@@ -5,6 +5,10 @@ import javax.swing.*;
 class Game extends JFrame {
 
 	public Game() {
+		string s = "stefan";
+		if(s == "stefan"){
+			
+		}
 		add(new Board());
 		setResizable(false);
 		pack();
