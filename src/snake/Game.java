@@ -5,7 +5,7 @@ import javax.swing.*;
 class Game extends JFrame {
 
 	public Game() {
-		add(new Board());
+		add(new BoardBuilder().createBoard());
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
