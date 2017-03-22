@@ -1,14 +1,12 @@
 package snake;
 
-import interfaceSnake.IBoard;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
-public class Board extends JPanel implements ActionListener, IBoard {
+public class Board extends JPanel implements ActionListener {
 	//toplevel variabele
 	private final int GAME_SPEED_MILISECONDS = 500;
 	private final int BOARD_SIZE = 500;
@@ -36,12 +34,11 @@ public class Board extends JPanel implements ActionListener, IBoard {
 		initGame();
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		//aangeroepen door timer veld wordt wit gemaakt en dan als de slang verplaatst is wordt er gekeken of hij doorgaat
 		Graphics graphics = getGraphics();
 		graphics.setColor(Color.WHITE);
-		graphics.fillRect(X, X,BOARD_SIZE,BOARD_SIZE);
+		graphics.fillRect(0,0,BOARD_SIZE,BOARD_SIZE);
 		graphics.setColor(Color.BLACK);
 		moveSnake();
 		checkCollisionBait();
@@ -49,7 +46,6 @@ public class Board extends JPanel implements ActionListener, IBoard {
 		draw(graphics);
 	}
 
-	@Override
 	public void initGame() {
 		//beginwaarde van de game instellen
 		isGameOver = false;
@@ -57,60 +53,57 @@ public class Board extends JPanel implements ActionListener, IBoard {
 		bodyLength = 3;
 		int x = 200;
 		int y = 200;
-		for(int length = X; length<bodyLength; length++) {
-			bodySnakeX[length] = x;
-			bodySnakeY[length] = y;
+		for(int i = 0; i<bodyLength; i++) {
+			bodySnakeX[i] = x;
+			bodySnakeY[i] = y;
 			x -= BOX_SIZE;
 		}
-		newBait(this);
+		newBait();
 		timer.start();
 	}
 
-	public static void newBait(Board board) {
+	public void newBait() {
 		//nieuw punt kan niet op slang
 		boolean noNewBait = true;
 		while(noNewBait) {
 			noNewBait = false;
 			//berekening punt
-			int x = (int) (board.REMAINING_SIZE * Math.random());
-			int y = (int) (board.REMAINING_SIZE * Math.random());
-			int resx = board.BOX_SIZE - x% board.BOX_SIZE;
-			int resy = board.BOX_SIZE - y% board.BOX_SIZE;
-			board.baitX = x + resx;
-			board.baitY = y + resy;
-			for(int length = X; length< board.bodyLength; length++) {
+			int x = getRandom(REMAINING_SIZE);
+			int y = getRandom(REMAINING_SIZE);
+			int resx = BOX_SIZE - x%BOX_SIZE;
+			int resy = BOX_SIZE - y%BOX_SIZE;
+			baitX = x + resx;
+			baitY = y + resy;
+			for(int i = 0; i<bodyLength;i++) {
 				//gaat door als het punt ook een punt van de slang is
-				if(board.bodySnakeX[length] == board.baitX && board.bodySnakeY[length] == board.baitY) {
+				if(bodySnakeX[i] == baitX && bodySnakeY[i] == baitY) {
 					noNewBait = true;
 				}
 			}
 		}
 	}
 
-	@Override
 	public void checkCollisionBait() {
 		//als hij nieuw punt bereikt wordt die toegevoegd en nieuwe aangemaakt
-		if(bodySnakeX[X]== baitX && bodySnakeY[X]== baitY) {
+		if(bodySnakeX[0]== baitX && bodySnakeY[0]== baitY) {
 			bodyLength++;
-			newBait(this);
+			newBait();
 		}
 	}
 
-	@Override
 	public void checkCollisionTail() {
 		//als hij zijn staart aanraakt is hij game over
 		for(int i = 1; i<bodyLength; i++) {
-			if(bodySnakeX[X]== bodySnakeX[i] && bodySnakeY[X]==bodySnakeY[i]) {
+			if(bodySnakeX[0]== bodySnakeX[i] && bodySnakeY[0]==bodySnakeY[i]) {
 				isGameOver = true;
 			}
 		}
 	}
 
-	@Override
 	public void draw(Graphics g) {
 		//als hij niet game over is
 		if(!isGameOver) {
-			drawCheckBoard(CheckBoard.createCheckBoard(g));
+			drawCheckBoard(g);
 			drawSnake(g);
 			drawBait(g);
 		}
@@ -120,99 +113,89 @@ public class Board extends JPanel implements ActionListener, IBoard {
 		}
 	}
 
-	@Override
-	public void drawCheckBoard(CheckBoard checkBoard) {
+	public void drawCheckBoard(Graphics g) {
 		//grid wordt getekend
-		int x = X;
-		int y = X;
-		for(int boardX = X; boardX<TOTAL_BOXES/2; boardX++) {
-			for(int boardY = X; boardY<TOTAL_BOXES/2; boardY++) {
-				checkBoard.getG().drawRect(x,y,BOX_SIZE,BOX_SIZE);
+		int x = 0;
+		int y = 0;
+		for(int i = 0; i<10; i++) {
+			for(int j = 0; j<10; j++) {
+				g.drawRect(x,y,BOX_SIZE,BOX_SIZE);
 				x+= BOX_SIZE;
 			}
-			x= X;
+			x=0;
 			y+=BOX_SIZE;
 		}
 	}
 
-	@Override
 	public void drawSnake(Graphics g) {
 		//voor elk punt in de lijst wordt er een cirkel getekend
 		g.setColor(Color.GREEN);
-		g.fillOval(bodySnakeX[X], bodySnakeY[X],BOX_SIZE,BOX_SIZE);
+		g.fillOval(bodySnakeX[0], bodySnakeY[0],BOX_SIZE,BOX_SIZE);
 		g.setColor(Color.BLACK);
-		for(int length=1; length<bodyLength;length++) {
-			g.fillOval(bodySnakeX[length],bodySnakeY[length],BOX_SIZE,BOX_SIZE);
+		for(int i=1; i<bodyLength;i++) {
+			g.fillOval(bodySnakeX[i],bodySnakeY[i],BOX_SIZE,BOX_SIZE);
 		}
 	}
 
-	@Override
 	public void drawBait(Graphics g) {
 		//nieuw punt getekend
 		g.setColor(Color.RED);
 		g.fillOval(baitX, baitY,BOX_SIZE,BOX_SIZE);
 	}
 
-	@Override
 	public void moveSnake() {
 		//elk punt neemt de positie van zijn voorganger over
-		for(int length = bodyLength; length> X; length--) {
-			bodySnakeX[length] = bodySnakeX[length-1];
-			bodySnakeY[length] = bodySnakeY[length-1];
+		for(int i = bodyLength; i>0; i--) {
+			bodySnakeX[i] = bodySnakeX[i-1];
+			bodySnakeY[i] = bodySnakeY[i-1];
 		}
 		//positie voorste is een nieuw punt en als hij aan het eind van de frame is dan gaat hij verder aan de andere kant
 		switch (direction) {
 			case RIGHT:
-				moveRight();
+				if (bodySnakeX[0] == REMAINING_SIZE) {
+					bodySnakeX[0] = 0;
+				} else {
+					bodySnakeX[0] += BOX_SIZE;
+				}
 				break;
 			case LEFT:
-				moveLeft();
+				if (bodySnakeX[0] == 0) {
+					bodySnakeX[0] = REMAINING_SIZE;
+				} else {
+					bodySnakeX[0] -= BOX_SIZE;
+				}
 				break;
 			case UP:
-				moveUp();
+				if (bodySnakeY[0] == 0) {
+					bodySnakeY[0] = REMAINING_SIZE;
+				} else {
+					bodySnakeY[0] -= BOX_SIZE;
+				}
 				break;
 			case DOWN:
-				moveDown();
+				if (bodySnakeY[0] == REMAINING_SIZE) {
+					bodySnakeY[0] = 0;
+				} else {
+					bodySnakeY[0] += BOX_SIZE;
+				}
 				break;
 		}
 	}
 
-	private void moveDown() {
-		if (bodySnakeY[X] == REMAINING_SIZE) {
-            bodySnakeY[X] = X;
-        } else {
-            bodySnakeY[X] += BOX_SIZE;
-        }
-	}
-
-	private void moveUp() {
-		if (bodySnakeY[X] == X) {
-            bodySnakeY[X] = REMAINING_SIZE;
-        } else {
-            bodySnakeY[X] -= BOX_SIZE;
-        }
-	}
-
-	private void moveLeft() {
-		if (bodySnakeX[X] == X) {
-            bodySnakeX[X] = REMAINING_SIZE;
-        } else {
-            bodySnakeX[X] -= BOX_SIZE;
-        }
-	}
-
-	private void moveRight() {
-		if (bodySnakeX[X] == REMAINING_SIZE) {
-            bodySnakeX[X] = X;
-        } else {
-            bodySnakeX[X] += BOX_SIZE;
-        }
-	}
-
-	@Override
 	public void gameOver(Graphics g) {
-		new GameOver(g).invoke();
+		//uitgevoerd als game over
+		timer.stop();
+		g.setColor(Color.WHITE);
+		g.fillRect(0,0,BOARD_SIZE,BOARD_SIZE);
+		g.setColor(Color.BLACK);
+		g.drawString("GAME OVER!!!! \n  \n  \n ",100,100);
+		g.drawString("Om een nieuw spel te starten klik Y",100,120);
+		g.drawString("Om het spel te stoppen klik N",100,140);
+		g.drawString("Je hebt een lengte bereikt van: "+bodyLength,100,200);
+	}
 
+	private int getRandom(int i) {
+		return (int)(i * Math.random());
 	}
 
 	public class MyKeyListener implements KeyListener {
@@ -243,30 +226,10 @@ public class Board extends JPanel implements ActionListener, IBoard {
 			}
 			//n
 			else if(e.getKeyCode()== KeyEvent.VK_N && isGameOver) {
-				System.exit(X);
+				System.exit(0);
 			}
 		}
 		@Override
 		public void keyReleased(KeyEvent e) {}
-	}
-
-	private class GameOver {
-		private Graphics g;
-
-		public GameOver(Graphics g) {
-			this.g = g;
-		}
-
-		public void invoke() {
-			//uitgevoerd als game over
-			timer.stop();
-			g.setColor(Color.WHITE);
-			g.fillRect(X, X,BOARD_SIZE,BOARD_SIZE);
-			g.setColor(Color.BLACK);
-			g.drawString("GAME OVER!!!! \n  \n  \n ",100,100);
-			g.drawString("Om een nieuw spel te starten klik Y",100,120);
-			g.drawString("Om het spel te stoppen klik N",100,140);
-			g.drawString("Je hebt een lengte bereikt van: "+bodyLength,100,200);
-		}
 	}
 }
