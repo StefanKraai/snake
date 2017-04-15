@@ -1,5 +1,6 @@
 package snake;
 
+
 import javax.swing.*;
 
 class Game extends JFrame {
