@@ -3,6 +3,7 @@ package snake;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.Random;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
@@ -195,7 +196,7 @@ public class Board extends JPanel implements ActionListener {
 	}
 
 	private int getRandom(int i) {
-		return (int)(i * Math.random());
+		return Random.nextInt(i);
 	}
 
 	public class MyKeyListener implements KeyListener {
