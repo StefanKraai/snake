@@ -9,11 +9,11 @@ import java.awt.event.KeyEvent;
 
 public class Board extends JPanel implements ActionListener {
 	//toplevel variabele
-	private final int GAME_SPEED_MILISECONDS = 500;
-	private final int BOARD_SIZE = 500;
-	private final int BOX_SIZE = 50;
-	private final int REMAINING_SIZE = BOARD_SIZE - BOX_SIZE;
-	private final int TOTAL_BOXES = (BOARD_SIZE / BOX_SIZE)*(BOARD_SIZE / BOX_SIZE);
+	private static final int GAME_SPEED_MILISECONDS = 500;
+	private static final int BOARD_SIZE = 500;
+	private static final int BOX_SIZE = 50;
+	private static final int REMAINING_SIZE = BOARD_SIZE - BOX_SIZE;
+	private static final int TOTAL_BOXES = (BOARD_SIZE / BOX_SIZE)*(BOARD_SIZE / BOX_SIZE);
 
 	private boolean isGameOver;
 	private Direction direction = Direction.RIGHT;
