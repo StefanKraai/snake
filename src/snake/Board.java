@@ -180,6 +180,8 @@ public class Board extends JPanel implements ActionListener {
 					bodySnakeY[0] += BOX_SIZE;
 				}
 				break;
+			default:
+				break;
 		}
 	}
 
